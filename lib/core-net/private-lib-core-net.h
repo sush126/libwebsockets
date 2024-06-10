@@ -655,6 +655,9 @@ struct lws {
 	lws_sorted_usec_list_t		sul_hrtimer;
 	lws_sorted_usec_list_t		sul_validity;
 	lws_sorted_usec_list_t		sul_connect_timeout;
+#if defined(WIN32)
+	lws_sorted_usec_list_t		win32_sul_connect_async_check;
+#endif
 
 	struct lws_dll2			dll_buflist; /* guys with pending rxflow */
 	struct lws_dll2			same_vh_protocol;
@@ -1403,6 +1406,8 @@ lws_sort_dns(struct lws *wsi, const struct addrinfo *result);
 int
 lws_broadcast(struct lws_context_per_thread *pt, int reason, void *in, size_t len);
 
+const char *
+lws_errno_describe(int en, char *result, size_t len);
 
 #if defined(LWS_WITH_PEER_LIMITS)
 void

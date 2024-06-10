@@ -25,6 +25,62 @@
 #include "private-lib-core.h"
 #include <errno.h>
 
+const char *
+lws_errno_describe(int en, char *result, size_t len)
+{
+#if !defined(WIN32)
+	switch (en) {
+	case EAGAIN:
+		return "EAGAIN";
+	case EALREADY:
+		return "EALREADY";
+	case EINPROGRESS:
+		return "EINPROGRESS";
+	case EINTR:
+		return "EINTR";
+	case EISCONN:
+		return "EISCONN";
+	case ENOTCONN:
+		return "ENOTCONN";
+	case EADDRINUSE:
+		return "EADDRINUSE";
+	case EHOSTUNREACH:
+		return "EHOSTUNREACH";
+	case ECONNREFUSED:
+		return "ECONNREFUSED";
+	default:
+		break;
+	}
+	lws_snprintf(result, len, "errno %d", en);
+
+	return result;
+#else
+	switch (en) {
+	case WSAEISCONN:
+		return "WSAEISCONN";
+	case WSAEALREADY:
+		return "WSAEALREADY";
+	case WSAEINVAL:
+		return "WSAEINVAL";
+	case WSAENETUNREACH:
+		return "WSAENETUNREACH";
+	case WSAECONNABORTED:
+		return "WSAECONNABORTED";
+	case WSAECONNRESET:
+		return "WSAECONNRESET";
+	case WSAETIMEDOUT:
+		return "WSAETIMEDOUT";
+	case WSAECONNREFUSED:
+		return "WSAECONNREFUSED";
+	default:
+		break;
+	}
+	lws_snprintf(result, len, "wsaerrno %d", en);
+
+	return result;
+#endif
+}
+
 #if !defined(LWS_PLAT_FREERTOS) && !defined(LWS_PLAT_OPTEE)
 static int
 interface_to_sa(struct lws_vhost *vh, const char *ifname,
